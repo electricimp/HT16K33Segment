@@ -106,5 +106,6 @@ The display can be turned off by calling *powerDown()*.
 
 The display can be turned on by calling *powerup()*.
 
-## Licence
+## License
 
+The HTK16K33Segment library is licensed under the [MIT License](./LICENSE).
