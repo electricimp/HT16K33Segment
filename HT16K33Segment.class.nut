@@ -93,7 +93,7 @@ class HT16K33Segment
     if (set) _buffer[2] = 0xFF
   }
 
-  function writeChar(rowNum = 0, charVal = 0x7F, hasDot = false)
+  function writeChar(rowNum, charVal, hasDot = false)
   {
     // Puts the input character matrix (an 8-bit integer) into the specified row,
     // adding a decimal point if required. Character matrix value is calculated by
@@ -112,6 +112,7 @@ class HT16K33Segment
     //
     // Bit 7 is the period, but this is set with parameter 3
 
+    if (charVal < 0 || charVal > 255) return
     if (rowNum < 0 || rowNumber > 4) return
     if (hasDot) charVal = charVal | 0x80
     _buffer[rowNum] = charVal
