@@ -31,9 +31,8 @@ Call *clearBuffer()* to zero the display buffer. If the optional *clearChar* par
 *clearBuffer()* does not update the display, only its buffer. Call *updateDisplay()* to refresh the LED.
 
 ```squirrel
-// Set the display to --:--
+// Set the display to -- --
 led.clearBuffer(17)
-led.setColon(true)
 led.updateDisplay()
 ```
 
