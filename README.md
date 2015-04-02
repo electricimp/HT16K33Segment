@@ -69,9 +69,9 @@ Calculate character matrix values using the following chart. The segment number 
 // Display 'SYNC' on the LED
 local letters = [0x6D, 0x6E, 0x00, 0x37, 0x39]
 
-foreach (index, char in letters)
+foreach (index, chara in letters)
 {
-  led.writeChar(index, char, false)
+  led.writeChar(index, chara, false)
 }
 
 led.updateDisplay()
