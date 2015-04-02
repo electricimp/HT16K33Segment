@@ -58,14 +58,13 @@ class HT16K33Segment
     // 3. Boolean value - should the colon (_digits[2]) be shown?
 
     // Set the brightness (which of necessity power cyles the dispay)
+    // Note: setBrightness() verifies the brightness value
     
-    if (brightness < 0) brightness = 0
-    if (brightness > 15) brightness = 15
     setBrightness(brightness)
 
     // Clear the screen to the chosen character
+    // Note: clearBuffer() verifies the clearChar value
     
-    if (clearChar < 0 || clearChar > HT16K33_CHAR_COUNT) clearChar = HT16K33_BLANK_CHAR
     clearBuffer(clearChar)
     setColon(showColon)
     updateDisplay()
