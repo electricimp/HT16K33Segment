@@ -10,7 +10,7 @@ class HT16K33Segment
   HT16K33_I2C_ADDRESS = 0x70
   HT16K33_BLANK_CHAR = 16
   HT16K33_MINUS_CHAR = 17
-  HT16K33_CHAR_COUNT = 18
+  HT16K33_CHAR_COUNT = 17
 
   // Class properties; those defined in the Constructor must be null
 
