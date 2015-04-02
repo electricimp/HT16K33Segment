@@ -113,17 +113,17 @@ class HT16K33Segment
     // Bit 7 is the period, but this is set with parameter 3
 
     if (charVal < 0 || charVal > 255) return
-    if (rowNum < 0 || rowNumber > 4) return
+    if (rowNum < 0 || rowNum > 4 || rowNum == 2) return
     if (hasDot) charVal = charVal | 0x80
     _buffer[rowNum] = charVal
   }
 
-  function writeNumber(rowNum = 0, intVal = 0, hasDot = false)
+  function writeNumber(rowNum, intVal, hasDot = false)
   {
     // Puts the number - ie. index of _digits[] - into the specified row,
     // adding a decimal point if required
 
-    if (rowNum < 0 || rowNum > 4) return
+    if (rowNum < 0 || rowNum > 4 || rowNum == 2) return
     if (intVal < 0 || intVal > 15) return
 
     if (hasDot)
