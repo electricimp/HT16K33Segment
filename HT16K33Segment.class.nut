@@ -2,15 +2,15 @@ class HT16K33Segment
 {
   // HT16K33 registers and HT16K33-specific constants
 
-  HT16K33_REGISTER_DISPLAY_ON  = "\x81"
-  HT16K33_REGISTER_DISPLAY_OFF = "\x80"
-  HT16K33_REGISTER_SYSTEM_ON   = "\x21"
-  HT16K33_REGISTER_SYSTEM_OFF  = "\x20"
-  HT16K33_DISPLAY_ADDRESS      = "\x00"
-  HT16K33_I2C_ADDRESS = 0x70
-  HT16K33_BLANK_CHAR = 16
-  HT16K33_MINUS_CHAR = 17
-  HT16K33_CHAR_COUNT = 17
+  static HT16K33_REGISTER_DISPLAY_ON  = "\x81"
+  static HT16K33_REGISTER_DISPLAY_OFF = "\x80"
+  static HT16K33_REGISTER_SYSTEM_ON   = "\x21"
+  static HT16K33_REGISTER_SYSTEM_OFF  = "\x20"
+  static HT16K33_DISPLAY_ADDRESS      = "\x00"
+  static HT16K33_I2C_ADDRESS = 0x70
+  static HT16K33_BLANK_CHAR = 16
+  static HT16K33_MINUS_CHAR = 17
+  static HT16K33_CHAR_COUNT = 17
 
   // Class properties; those defined in the Constructor must be null
 
