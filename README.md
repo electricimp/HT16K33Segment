@@ -11,7 +11,7 @@ The class incorporates its own (limited) character set, accessed through the fol
 
 ## Class Usage
 
-## Constructor: HT16K33Segment(*impI2cBus, [i2cAddress]*)
+### Constructor: HT16K33Segment(*impI2cBus, [i2cAddress]*)
 
 To instantiate a HT16K33Segment object pass the I&sup2;C bus to which the display is connected and, optionally, its I&sup2;C address. If no address is passed, the default value, `0x70` will be used. Pass an alternative address if you have changed the display’s address using the solder pads on rear of the LED’s circuit board.
 
@@ -24,7 +24,7 @@ led <- HT16K33Segment(hardware.i2c89)
 
 ## Class Methods
 
-## clearBuffer(*[clearChar]*)
+### clearBuffer(*[clearChar]*)
 
 Call *clearBuffer()* to zero the display buffer. If the optional *clearChar* parameter is not passed, no characters will be displayed. Pass a character code *(see above)* to zero the display to a specific character.
 
@@ -36,7 +36,7 @@ led.clearBuffer(17)
 led.updateDisplay()
 ```
 
-## setColon(*set*)
+### setColon(*set*)
 
 Call *setColon()* to specify whether the display’s center colon symbol is illuminated (`true`) or not (`false`).
 
@@ -47,7 +47,7 @@ led.setColon(true)
 led.updateDisplay()
 ```
 
-## writeChar(*rowNum, charVal, [hasDot]*)
+### writeChar(*rowNum, charVal, [hasDot]*)
 
 To write a character that is not in the character set *(see above)* to a single segment, call *writeChar()* and pass the segment number (0, 1, 3 or 4) and a character matrix value as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of each segment should be illuminated. By default, the decimal point is not lit.
 
@@ -89,19 +89,19 @@ led.writeNumber(4, 2)
 led.updateDisplay()
 ```
 
-## updateDisplay()
+### updateDisplay()
 
 Call *updateDisplay()* after changing any or all of the display buffer contents in order to reflect those changes on the display itself.
 
-## setBrightness(*[brightness]*)
+### setBrightness(*[brightness]*)
 
 To set the LED’s brightess (its duty cycle), call *setBrightness()* and pass an integer value between 0 (dim) and 15 (maximum brightness). If you don’t pass a value, the method will default to maximum brightness.
 
-## powerDown()
+### powerDown()
 
 The display can be turned off by calling *powerDown()*.
 
-## powerUp()
+### powerUp()
 
 The display can be turned on by calling *powerup()*.
 
