@@ -83,9 +83,9 @@ To write a number to a single segment, call *writeNumber()* and pass the segment
 ```squirrel
 // Display '42.42' on the LED
 led.writeNumber(0, 4)
-led.writeNumber(0, 2, true)
-led.writeNumber(0, 4)
-led.writeNumber(0, 2)
+led.writeNumber(1, 2, true)
+led.writeNumber(3, 4)
+led.writeNumber(4, 2)
 led.updateDisplay()
 ```
 
