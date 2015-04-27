@@ -11,6 +11,8 @@ class HT16K33Segment
   static HT16K33_BLANK_CHAR = 16
   static HT16K33_MINUS_CHAR = 17
   static HT16K33_CHAR_COUNT = 17
+  
+  static version = [1,0,1]
 
   // Class properties; those defined in the Constructor must be null
 
@@ -25,7 +27,7 @@ class HT16K33Segment
     // 1. Whichever *configured* imp I2C bus is to be used for the HT16K33
     // 2. The HT16K33's I2C address (default: 0x70)
 
-    if (impBus == null) return null
+    if (i2cBus == null || i2cAddress == null || i2cAddress == 0) return null
     
     _led = impBus
     _ledAddress = i2cAddress << 1
