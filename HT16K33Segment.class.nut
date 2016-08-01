@@ -27,7 +27,7 @@ class HT16K33Segment
     // 1. Whichever *configured* imp I2C bus is to be used for the HT16K33
     // 2. The HT16K33's I2C address (default: 0x70)
 
-    if (i2cBus == null || i2cAddress == null || i2cAddress == 0) return null
+    if (impBus == null || i2cAddress == null || i2cAddress == 0) return null
     
     _led = impBus
     _ledAddress = i2cAddress << 1
