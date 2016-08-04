@@ -1,4 +1,12 @@
 class HT16K33Segment {
+    // Hardware driver for Adafruit 0.56-inch 4-digit, 7-segment LED display
+    // based on the Holtek HT16K33 controller.
+    // The LED communicates over any imp I2C bus.
+
+    // Written by Tony Smith (smittytone) 2014-16
+    // Copyright Electric Imp, Inc. 2014-2016.
+    // https://electricimp.com/
+    // Licence: MIT
 
     // HT16K33 registers and HT16K33-specific constants
     static HT16K33_REGISTER_DISPLAY_ON  = "\x81";
@@ -6,10 +14,10 @@ class HT16K33Segment {
     static HT16K33_REGISTER_SYSTEM_ON   = "\x21";
     static HT16K33_REGISTER_SYSTEM_OFF  = "\x20";
     static HT16K33_DISPLAY_ADDRESS      = "\x00";
-    static HT16K33_I2C_ADDRESS = 0x70;
-    static HT16K33_BLANK_CHAR = 16;
-    static HT16K33_MINUS_CHAR = 17;
-    static HT16K33_CHAR_COUNT = 17;
+    static HT16K33_I2C_ADDRESS          = 0x70;
+    static HT16K33_BLANK_CHAR           = 16;
+    static HT16K33_MINUS_CHAR           = 17;
+    static HT16K33_CHAR_COUNT           = 17;
 
     static VERSION = [1,1,0];
 
@@ -38,17 +46,19 @@ class HT16K33Segment {
         // _buffer stores the character matrix values for each row of the display,
         // Including the center colon character
         //
-        //   0    1   2   3    4
-        //  [ ]  [ ]  .  [ ]  [ ]
-        //   -    -       -    -
-        //  [ ]  [ ]  .  [ ]  [ ]
-        //
+        //     0    1   2   3    4
+        //    [ ]  [ ]     [ ]  [ ]
+        //     -    -   .   -    -
+        //    [ ]  [ ]  .  [ ]  [ ]
+
         _buffer = [0x00, 0x00, 0x00, 0x00, 0x00];
 
         // _digits store character matrices for 0-9, A-F, blank and minus
-        _digits = [0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F,  // 0-9
-               0x5F, 0x7C, 0x58, 0x5E, 0x7B, 0x71,  // A-F
-               0x00, 0x40]; // Space and minus symbol
+        _digits = [
+            0x3F, 0x06, 0x5B, 0x4F, 0x66, 0x6D, 0x7D, 0x07, 0x7F, 0x6F,  // 0-9
+            0x5F, 0x7C, 0x58, 0x5E, 0x7B, 0x71,                          // A-F
+            0x00, 0x40                                                   // Space, minus sign
+        ];
 
         init();
     }
@@ -65,7 +75,6 @@ class HT16K33Segment {
 
         // Clear the screen to the chosen character
         // Note: clearBuffer() verifies the clearChar value
-
         clearBuffer(clearChar).setColon(showColon).updateDisplay();
     }
 
@@ -86,8 +95,7 @@ class HT16K33Segment {
         // Parameter:
         //   1. Boolean indicating whether colon is shown (true) or hidden (false)
 
-        _buffer[2] = 0x00;
-        if (set) _buffer[2] = 0xFF;
+        _buffer[2] = (set ? 0xFF : 0x00);
         return this;
     }
 
@@ -98,14 +106,14 @@ class HT16K33Segment {
         // Bit-to-segment mapping runs clockwise from the top around the outside of the
         // matrix; the inner segment is bit 6:
         //
-        //       0
-        //       _
-        //   5 |   | 1
-        //     |   |
-        //       - <----- 6
-        //   4 |   | 2
-        //     | _ |
-        //       3
+        //         0
+        //         _
+        //     5 |   | 1
+        //       |   |
+        //         - <----- 6
+        //     4 |   | 2
+        //       | _ |
+        //         3
         //
         // Bit 7 is the period, but this is set with parameter 3
         // Parameters:
@@ -118,13 +126,12 @@ class HT16K33Segment {
             return this;
         }
 
-        if (rowNum < 0 || rowNum > 4 || rowNum == 2) {
-            if (_debug) server.error("HT16K33Segment.writeChar() chosen row out of range (0, 1, 3, 4)");
+        if (rowNum < 0 || rowNum > 4) {
+            if (_debug) server.error("HT16K33Segment.writeChar() chosen row out of range (0-4)");
             return this;
         }
 
-        if (hasDot) charVal = charVal | 0x80;
-        _buffer[rowNum] = charVal;
+        _buffer[rowNum] = (hasDot ? (charVal | 0x80) : charVal);
         return this;
     }
 
@@ -136,8 +143,8 @@ class HT16K33Segment {
         //   2. The integer index valur of the character required (0 - 17)
         //   3. Boolean indicating whether the digit is followed by a period
 
-        if (rowNum < 0 || rowNum > 4 || rowNum == 2) {
-            if (_debug) server.error("HT16K33Segment.writeNumber() chosen row out of range (0, 1, 3, 4)");
+        if (rowNum < 0 || rowNum > 4) {
+            if (_debug) server.error("HT16K33Segment.writeNumber() chosen row out of range (0-4)");
             return this;
         }
 
@@ -146,11 +153,7 @@ class HT16K33Segment {
             return this;
         }
 
-        if (hasDot) {
-            _buffer[rowNum] = _digits[intVal] | 0x80;
-        } else {
-            _buffer[rowNum] = _digits[intVal];
-        }
+        _buffer[rowNum] = (hasDot ? (_digits[intVal] | 0x80) : _digits[intVal]);
     }
 
     function updateDisplay() {
@@ -186,7 +189,7 @@ class HT16K33Segment {
         local sbuffer = [0,0,0,0,0];
 
         foreach (index, value in _buffer) {
-            sbuffer[index] = _buffer[index]
+            sbuffer[index] = _buffer[index];
         }
 
         clearBuffer(HT16K33_BLANK_CHAR);
@@ -200,9 +203,8 @@ class HT16K33Segment {
         _led.write(_ledAddress, brightness.tochar() + "\x00")
 
         // Restore the buffer and display it
-
         foreach (index, value in sbuffer) {
-            _buffer[index] = sbuffer[index]
+            _buffer[index] = sbuffer[index];
         }
 
         updateDisplay();
