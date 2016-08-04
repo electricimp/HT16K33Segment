@@ -16,9 +16,10 @@ From version 1.1.0, the methods *clearBuffer()*, *setColon()*, *writeChar()* and
 ```squirrel
 led.clearBuffer(17).setColon(true).writeChar(0, 0x6D).updateDisplay();
 ```
+
 ## Class Usage
 
-### Constructor: HT16K33Segment(*impI2cBus[, i2cAddress, debug]*)
+### Constructor: HT16K33Segment(*impI2cBus[, i2cAddress][, debug]*)
 
 To instantiate a HT16K33Segment object pass the I&sup2;C bus to which the display is connected and, optionally, its I&sup2;C address. If no address is passed, the default value, `0x70` will be used. Pass an alternative address if you have changed the display’s address using the solder pads on rear of the LED’s circuit board.
 
@@ -27,6 +28,8 @@ The third parameter allows you to receive extra debugging information in the log
 The passed imp I&sup2;C bus must be configured before the HT16K33Segment object is created.
 
 ```squirrel
+#require "HT16K33Segment.class.nut:1.1.0"
+
 hardware.i2c89.configure(CLOCK_SPEED_400_KHZ);
 led <- HT16K33Segment(hardware.i2c89);
 ```
@@ -56,29 +59,29 @@ led.clearBuffer(17)
     .updateDisplay();
 ```
 
-### writeChar(*rowNum, charVal, [hasDot]*)
+### writeChar(*rowNum, charVal[, hasDot]*)
 
 To write a character that is not in the character set *(see above)* to a single segment, call *writeChar()* and pass the segment number (0, 1, 3 or 4) and a character matrix value as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of each segment should be illuminated. By default, the decimal point is not lit.
 
 Calculate character matrix values using the following chart. The segment number is the bit that must be set to illuminate it (or unset to keep it unlit):
 
 ```
-     0
-     _
- 5 |   | 1
-   |   |
-     - <----- 6
- 4 |   | 2
-   | _ |
-     3
+        0
+        _
+    5 |   | 1
+      |   |
+        - <----- 6
+    4 |   | 2
+      | _ |
+        3
 ```
 
 ```squirrel
 // Display 'SYNC' on the LED
 local letters = [0x6D, 0x6E, 0x00, 0x37, 0x39];
 
-foreach (index, chara in letters) {
-    led.writeChar(index, chara, false);
+foreach (index, character in letters) {
+    led.writeChar(index, character);
 }
 
 led.updateDisplay();
