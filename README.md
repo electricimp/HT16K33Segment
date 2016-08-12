@@ -38,7 +38,7 @@ led <- HT16K33Segment(hardware.i2c89);
 
 ### clearBuffer(*[clearChar]*)
 
-Call *clearBuffer()* to zero the display buffer. If the optional *clearChar* parameter is not passed, no characters will be displayed. Pass a character code *(see above)* to zero the display to a specific character.
+Call *clearBuffer()* to zero the display buffer. If the optional *clearChar* parameter is not passed, no characters will be displayed. Pass a character code *(see above)* to zero the display to a specific character, eg. `0` to zero the display.
 
 *clearBuffer()* does not update the display, only its buffer. Call *updateDisplay()* to refresh the LED.
 
@@ -61,7 +61,7 @@ led.clearBuffer(17)
 
 ### writeChar(*rowNum, charVal[, hasDot]*)
 
-To write a character that is not in the character set *(see above)* to a single segment, call *writeChar()* and pass the segment number (0, 1, 3 or 4) and a character matrix value as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of each segment should be illuminated. By default, the decimal point is not lit.
+To write a character that is not in the character set *(see above)* to a single segment, call *writeChar()* and pass the segment number (0, 1, 3 or 4) and a character matrix value as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of the specified segment should be illuminated. By default, the decimal point is not lit.
 
 Calculate character matrix values using the following chart. The segment number is the bit that must be set to illuminate it (or unset to keep it unlit):
 
@@ -78,10 +78,10 @@ Calculate character matrix values using the following chart. The segment number 
 
 ```squirrel
 // Display 'SYNC' on the LED
-local letters = [0x6D, 0x6E, 0x00, 0x37, 0x39];
+local letters = [0x6D, 0x6E, 0x37, 0x39];
 
 foreach (index, character in letters) {
-    led.writeChar(index, character);
+    if (index != 2) led.writeChar(index, character);
 }
 
 led.updateDisplay();
@@ -89,7 +89,7 @@ led.updateDisplay();
 
 ## writeNumber(*rowNum, intVal[, hasDot]*)
 
-To write a number to a single segment, call *writeNumber()* and pass the segment number (0, 1, 3 or 4) and the digit value (0 to 9, A to F) as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of each segment should be illuminated. By default, the decimal point is not lit.
+To write a number to a single segment, call *writeNumber()* and pass the segment number (0, 1, 3 or 4) and the digit value (0 to 9, A to F) as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of the specified segment should be illuminated. By default, the decimal point is not lit.
 
 ```squirrel
 // Display '42.42' on the LED
@@ -99,6 +99,10 @@ led.writeNumber(0, 4)
     .writeNumber(4, 2)
     .updateDisplay();
 ```
+
+### clearDisplay()
+
+Call *clearDisplay()* to completely wipe the display, including the colon. Unlike *clearBuffer()*, this method can’t be used to set all the segments to a specific character, but it does automatically update the display.
 
 ### updateDisplay()
 
