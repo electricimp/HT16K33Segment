@@ -19,7 +19,7 @@ class HT16K33Segment {
     static HT16K33_MINUS_CHAR           = 17;
     static HT16K33_CHAR_COUNT           = 17;
 
-    static VERSION = [1,1,0];
+    static version = [1,1,0];
 
     // Class properties; those defined in the Constructor must be null
     _buffer = null;
@@ -75,12 +75,15 @@ class HT16K33Segment {
 
         // Clear the screen to the chosen character
         // Note: clearBuffer() verifies the clearChar value
-        clearBuffer(clearChar).setColon(showColon).updateDisplay();
+        clearDisplay();
     }
 
     function clearBuffer(clearChar = 16) {
         // Fills the buffer with a blank character, or the _digits[] character matrix whose index is provided
-        if (clearChar < 0 || clearChar > HT16K33_CHAR_COUNT) clearChar = HT16K33_BLANK_CHAR;
+        if (clearChar < 0 || clearChar > HT16K33_CHAR_COUNT) {
+            clearChar = HT16K33_BLANK_CHAR;
+            if (_debug) server.error("HT16K33Segment.clearBuffer() passed out-of-range character value (0-16)");
+        }
 
         // Put the clearCharacter into the buffer except row 2 (colon row)
         _buffer[0] = _digits[clearChar];
@@ -95,7 +98,7 @@ class HT16K33Segment {
         // Parameter:
         //   1. Boolean indicating whether colon is shown (true) or hidden (false)
 
-        _buffer[2] = (set ? 0xFF : 0x00);
+        _buffer[2] = set ? 0xFF : 0x00;
         return this;
     }
 
@@ -131,7 +134,7 @@ class HT16K33Segment {
             return this;
         }
 
-        _buffer[rowNum] = (hasDot ? (charVal | 0x80) : charVal);
+        _buffer[rowNum] = hasDot ? (charVal | 0x80) : charVal;
         return this;
     }
 
@@ -153,7 +156,12 @@ class HT16K33Segment {
             return this;
         }
 
-        _buffer[rowNum] = (hasDot ? (_digits[intVal] | 0x80) : _digits[intVal]);
+        _buffer[rowNum] = hasDot ? (_digits[intVal] | 0x80) : _digits[intVal];
+    }
+
+    function clearDisplay() {
+        // Convenience method to clear the display
+        clearBuffer().setColon(false).updateDisplay();
     }
 
     function updateDisplay() {
@@ -175,15 +183,16 @@ class HT16K33Segment {
 
         if (brightness > 15) {
             brightness = 15;
-            if (_debug) server.log("HT16K33Segment.setBrightness() brightness out of range (0-15)");
+            if (_debug) server.error("HT16K33Segment.setBrightness() brightness out of range (0-15)");
         }
 
         if (brightness < 0) {
             brightness = 0;
-            if (_debug) server.log("HT16K33Segment.setBrightness() brightness out of range (0-15)");
+            if (_debug) server.error("HT16K33Segment.setBrightness() brightness out of range (0-15)");
         }
 
         brightness = brightness + 224;
+        if (_debug) server.log("Brightness set to " + brightness);
 
         // Preserve the buffer contents before wiping the display
         local sbuffer = [0,0,0,0,0];
@@ -211,13 +220,13 @@ class HT16K33Segment {
     }
 
     function powerDown() {
-        if (_debug) server.log("Powering down HT16K33Segment display");
+        if (_debug) server.log("Powering HT16K33Segment display down");
         _led.write(_ledAddress, HT16K33_REGISTER_DISPLAY_OFF);
         _led.write(_ledAddress, HT16K33_REGISTER_SYSTEM_OFF);
     }
 
     function powerUp() {
-        if (_debug) server.log("Powering up HT16K33Segment display");
+        if (_debug) server.log("Powering HT16K33Segment display up");
         _led.write(_ledAddress, HT16K33_REGISTER_SYSTEM_ON);
         _led.write(_ledAddress, HT16K33_REGISTER_DISPLAY_ON);
     }
