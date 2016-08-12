@@ -93,15 +93,6 @@ class HT16K33Segment {
         return this;
     }
 
-    function setColon(set) {
-        // Shows or hides the colon row (display row 2)
-        // Parameter:
-        //   1. Boolean indicating whether colon is shown (true) or hidden (false)
-
-        _buffer[2] = set ? 0xFF : 0x00;
-        return this;
-    }
-
     function writeChar(rowNum, charVal, hasDot = false) {
         // Puts the input character matrix (an 8-bit integer) into the specified row,
         // adding a decimal point if required. Character matrix value is calculated by
@@ -177,6 +168,15 @@ class HT16K33Segment {
         _led.write(_ledAddress, dataString);
     }
 
+    function setColon(set) {
+        // Shows or hides the colon row (display row 2)
+        // Parameter:
+        //   1. Boolean indicating whether colon is shown (true) or hidden (false)
+
+        _buffer[2] = set ? 0xFF : 0x00;
+        return this;
+    }
+
     function setBrightness(brightness = 15) {
         // Parameters:
         //    1. Integer brightness value: 0 (min. but not off) to 15 (max) Default: 15
@@ -205,8 +205,8 @@ class HT16K33Segment {
         updateDisplay();
 
         // Power cycle the display
-        powerDown()
-        powerUp()
+        powerDown();
+        powerUp();
 
         // Write the new brightness value to the HT16K33
         _led.write(_ledAddress, brightness.tochar() + "\x00")
