@@ -11,7 +11,17 @@ The class incorporates its own (limited) character set, accessed through the fol
 
 **To add this library to your project, add** `#require "HT16K33Segment.class.nut:1.1.0"` **to the top of your device code**
 
-From version 1.1.0, the methods *clearBuffer()*, *setColon()*, *writeChar()* and *writeNumber()* return the context object, *this*, allowing these methods to be chained. For example:
+## Release Notes
+
+### 1.2.0
+
+- Add *setDisplayFlash()*
+- Add `return this;` missing from *writeNumber()*
+- *setBrightness()* code simplified; code that belongs in *init()* placed in that method
+
+### 1.1.0
+
+- From version 1.1.0, the methods *clearBuffer()*, *setColon()*, *writeChar()* and *writeNumber()* return the context object, *this*, allowing these methods to be chained. For example:
 
 ```squirrel
 led.clearBuffer(17).setColon(true).writeChar(0, 0x6D).updateDisplay();
@@ -111,6 +121,15 @@ Call *updateDisplay()* after changing any or all of the display buffer contents 
 ### setBrightness(*[brightness]*)
 
 To set the LED’s brightess (its duty cycle), call *setBrightness()* and pass an integer value between 0 (dim) and 15 (maximum brightness). If you don’t pass a value, the method will default to maximum brightness.
+
+### setDisplayFlash(*flashInHertz*)
+
+This method can be used to flash the display. The value passed into *flashInHertz* is the flash rate in Hertz. This value must be one of the following values, fixed by the HT16K33 controller: 0.5Hz, 1Hz or 2Hz. You can also pass in 0 to disable flashing, and this is the default value.
+
+```squirrel
+// Blink the display every second
+led.setDisplayFlag(1);
+```
 
 ### powerDown()
 
