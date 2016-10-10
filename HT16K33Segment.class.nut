@@ -90,7 +90,7 @@ class HT16K33Segment {
 
         if (clearChar < 0 || clearChar > HT16K33_CHAR_COUNT) {
             clearChar = HT16K33_BLANK_CHAR;
-            if (_debug) server.error("HT16K33Segment.clearBuffer() passed out-of-range character value (0-16)");
+            server.error("HT16K33Segment.clearBuffer() passed out-of-range character value (0-16)");
         }
 
         // Put the clearCharacter into the buffer except row 2 (colon row)
@@ -126,16 +126,17 @@ class HT16K33Segment {
         //    the instance (this)
 
         if (charVal < 0 || charVal > 255) {
-            if (_debug) server.error("HT16K33Segment.writeChar() character out of range (0-255)");
+            server.error("HT16K33Segment.writeChar() character out of range (0-255)");
             return this;
         }
 
         if (rowNum < 0 || rowNum > 4) {
-            if (_debug) server.error("HT16K33Segment.writeChar() chosen row out of range (0-4)");
+            server.error("HT16K33Segment.writeChar() chosen row out of range (0-4)");
             return this;
         }
 
         _buffer[rowNum] = hasDot ? (charVal | 0x80) : charVal;
+        if (_debug) server.log(format("Row %d set to character defined by 0x%02x %s", rowNum, charVal, (hasDot ? "with period" : "without period")));
         return this;
     }
 
@@ -150,16 +151,17 @@ class HT16K33Segment {
         //    the instance (this)
 
         if (rowNum < 0 || rowNum > 4) {
-            if (_debug) server.error("HT16K33Segment.writeNumber() chosen row out of range (0-4)");
+            server.error("HT16K33Segment.writeNumber() chosen row out of range (0-4)");
             return this;
         }
 
         if (intVal < 0 || intVal > 15) {
-            if (_debug) server.error("HT16K33Segment.writeChar() numeric character out of range (0x00-0x0F)");
+            server.error("HT16K33Segment.writeChar() numeric character out of range (0x00-0x0F)");
             return this;
         }
 
         _buffer[rowNum] = hasDot ? (_digits[intVal] | 0x80) : _digits[intVal];
+        if (_debug) server.log(format("Row %d set to integer %d %s", rowNum, intVal, (hasDot ? "with period" : "without period")));
         return this;
     }
 
@@ -189,6 +191,7 @@ class HT16K33Segment {
         //    the instance (this)
 
         _buffer[2] = set ? 0xFF : 0x00;
+        if (_debug) server.log(format("Colon set %s", (set ? "on" : "off")));
         return this;
     }
 
@@ -237,6 +240,7 @@ class HT16K33Segment {
 
         match = 0x81 + (match << 1);
         _led.write(_ledAddress, match.tochar() + "\x00");
+        if (_debug) server.log(format("Display flash set to %d Hz", ((match - 0x81) >> 1)));
     }
 
     function powerDown() {
