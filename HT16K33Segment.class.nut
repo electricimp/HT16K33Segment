@@ -19,7 +19,7 @@ class HT16K33Segment {
     static HT16K33_MINUS_CHAR           = 17;
     static HT16K33_CHAR_COUNT           = 17;
 
-    static version = [1,1,1];
+    static version = [1,2,0];
 
     // Class properties; those defined in the Constructor must be null
     _buffer = null;
@@ -68,6 +68,11 @@ class HT16K33Segment {
         //   1. Integer index for the _digits[] character matrix to zero the display to
         //   2. Integer value for the display brightness, between 0 and 15
         //   3. Boolean value - should the colon (_digits[2]) be shown?
+        // Returns:
+        //    Nothing
+
+        // Power up the display
+        powerUp();
 
         // Set the brightness, which power cyles the dispay
         // Note: setBrightness() verifies the brightness value
@@ -75,11 +80,14 @@ class HT16K33Segment {
 
         // Clear the screen to the chosen character
         // Note: clearBuffer() verifies the clearChar value
-        clearDisplay();
+        clearBuffer();
     }
 
     function clearBuffer(clearChar = 16) {
         // Fills the buffer with a blank character, or the _digits[] character matrix whose index is provided
+        // Returns:
+        //    the instance (this)
+
         if (clearChar < 0 || clearChar > HT16K33_CHAR_COUNT) {
             clearChar = HT16K33_BLANK_CHAR;
             if (_debug) server.error("HT16K33Segment.clearBuffer() passed out-of-range character value (0-16)");
@@ -114,6 +122,8 @@ class HT16K33Segment {
         //   1. The digit to be written to (0, 1, 3 or 4)
         //   2. The integer index valur of the character required (0 - 17)
         //   3. Boolean indicating whether the digit is followed by a period
+        // Returns:
+        //    the instance (this)
 
         if (charVal < 0 || charVal > 255) {
             if (_debug) server.error("HT16K33Segment.writeChar() character out of range (0-255)");
@@ -136,6 +146,8 @@ class HT16K33Segment {
         //   1. The digit to be written to (0, 1, 3 or 4)
         //   2. The integer index valur of the character required (0 - 17)
         //   3. Boolean indicating whether the digit is followed by a period
+        // Returns:
+        //    the instance (this)
 
         if (rowNum < 0 || rowNum > 4) {
             if (_debug) server.error("HT16K33Segment.writeNumber() chosen row out of range (0-4)");
@@ -173,6 +185,8 @@ class HT16K33Segment {
         // Shows or hides the colon row (display row 2)
         // Parameter:
         //   1. Boolean indicating whether colon is shown (true) or hidden (false)
+        // Returns:
+        //    the instance (this)
 
         _buffer[2] = set ? 0xFF : 0x00;
         return this;
@@ -181,6 +195,8 @@ class HT16K33Segment {
     function setBrightness(brightness = 15) {
         // Parameters:
         //    1. Integer brightness value: 0 (min. but not off) to 15 (max) Default: 15
+        // Returns:
+        //    Nothing
 
         if (brightness > 15) {
             brightness = 15;
@@ -195,29 +211,32 @@ class HT16K33Segment {
         brightness = brightness + 224;
         if (_debug) server.log("Brightness set to " + brightness);
 
-        // Preserve the buffer contents before wiping the display
-        local sbuffer = [0,0,0,0,0];
-
-        foreach (index, value in _buffer) {
-            sbuffer[index] = _buffer[index];
-        }
-
-        clearBuffer(HT16K33_BLANK_CHAR);
-        updateDisplay();
-
-        // Power cycle the display
-        powerDown();
-        powerUp();
-
         // Write the new brightness value to the HT16K33
         _led.write(_ledAddress, brightness.tochar() + "\x00")
+    }
 
-        // Restore the buffer and display it
-        foreach (index, value in sbuffer) {
-            _buffer[index] = sbuffer[index];
+    function setDisplayFlash(flashInHertz = 0) {
+        // Parameters:
+        //    1. Flash rate in Herz. Must be 0.5, 1 or 2 for a flash, or 0 for no flash
+        // Returns:
+        //    Nothing
+
+        local values = [0, 2, 1, 0.5];
+        local match = -1;
+        foreach (i, value in values) {
+            if (value == flashInHertz) {
+                match = i;
+                break;
+            }
         }
 
-        updateDisplay();
+        if (match == -1) {
+            server.error("HT16K33Segment.setDisplayBlink() passed an invalid blink frequency");
+            return null;
+        }
+
+        match = 0x81 + (match << 1);
+        _led.write(_ledAddress, match.tochar() + "\x00");
     }
 
     function powerDown() {
