@@ -155,8 +155,8 @@ class HT16K33Segment {
             return this;
         }
 
-        if (intVal < 0 || intVal > 15) {
-            server.error("HT16K33Segment.writeChar() numeric character out of range (0x00-0x0F)");
+        if (intVal < 0 || intVal > 17) {
+            server.error("HT16K33Segment.writeNumber() numeric character out of range (0x00-0x0F): " + intVal);
             return this;
         }
 
