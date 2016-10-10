@@ -19,7 +19,7 @@ class HT16K33Segment {
     static HT16K33_MINUS_CHAR           = 17;
     static HT16K33_CHAR_COUNT           = 17;
 
-    static version = [1,1,0];
+    static version = [1,1,1];
 
     // Class properties; those defined in the Constructor must be null
     _buffer = null;
@@ -148,6 +148,7 @@ class HT16K33Segment {
         }
 
         _buffer[rowNum] = hasDot ? (_digits[intVal] | 0x80) : _digits[intVal];
+        return this;
     }
 
     function clearDisplay() {
