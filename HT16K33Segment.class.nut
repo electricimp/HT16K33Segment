@@ -81,6 +81,8 @@ class HT16K33Segment {
         // Clear the screen to the chosen character
         // Note: clearBuffer() verifies the clearChar value
         clearBuffer();
+
+        return this;
     }
 
     function clearBuffer(clearChar = 16) {
@@ -98,6 +100,7 @@ class HT16K33Segment {
         _buffer[1] = _digits[clearChar];
         _buffer[3] = _digits[clearChar];
         _buffer[4] = _digits[clearChar];
+
         return this;
     }
 
@@ -141,6 +144,7 @@ class HT16K33Segment {
 
         _buffer[digit] = hasDot ? (charVal | 0x80) : charVal;
         if (_debug) server.log(format("Row %d set to character defined by 0x%02x %s", digit, charVal, (hasDot ? "with period" : "without period")));
+
         return this;
     }
 
@@ -166,6 +170,7 @@ class HT16K33Segment {
 
         _buffer[digit] = hasDot ? (_digits[number] | 0x80) : _digits[number];
         if (_debug) server.log(format("Row %d set to integer %d %s", digit, number, (hasDot ? "with period" : "without period")));
+
         return this;
     }
 
@@ -196,6 +201,7 @@ class HT16K33Segment {
 
         _buffer[2] = set ? 0xFF : 0x00;
         if (_debug) server.log(format("Colon set %s", (set ? "on" : "off")));
+
         return this;
     }
 

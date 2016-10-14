@@ -19,6 +19,7 @@ The class incorporates its own (limited) character set, accessed through the fol
 
 - Add *writeGlyph()* method to replace *writeChar()* to avoid confusion over method’s role
     - *writeChar()* still included so old code will not break
+- *init()* returns *this*
 - Clarifications made to Read Me
 
 ### 1.2.0
