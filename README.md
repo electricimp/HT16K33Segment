@@ -2,6 +2,8 @@
 
 Hardware driver for [Adafruit 0.56-inch 4-digit, 7-segment LED display](http://www.adafruit.com/products/878) based on the Holtek HT16K33 controller. The LED communicates over any imp I&sup2;C bus.
 
+## Characters
+
 The class incorporates its own (limited) character set, accessed through the following codes:
 
 - Digits 0 through 9: codes 0 through 9
@@ -9,9 +11,15 @@ The class incorporates its own (limited) character set, accessed through the fol
 - Space character: code 16
 - Minus character: code 17
 
-**To add this library to your project, add** `#require "HT16K33Segment.class.nut:1.1.0"` **to the top of your device code**
+**To add this library to your project, add** `#require "HT16K33Segment.class.nut:1.3.0"` **to the top of your device code**
 
 ## Release Notes
+
+### 1.3.0
+
+- Add *writeGlyph()* method to replace *writeChar()* to avoid confusion over method’s role
+    - *writeChar()* still included so old code will not break
+- Clarifications made to Read Me
 
 ### 1.2.0
 
@@ -38,7 +46,7 @@ The third parameter allows you to receive extra debugging information in the log
 The passed imp I&sup2;C bus must be configured before the HT16K33Segment object is created.
 
 ```squirrel
-#require "HT16K33Segment.class.nut:1.1.0"
+#require "HT16K33Segment.class.nut:1.3.0"
 
 hardware.i2c89.configure(CLOCK_SPEED_400_KHZ);
 led <- HT16K33Segment(hardware.i2c89);
@@ -48,14 +56,14 @@ led <- HT16K33Segment(hardware.i2c89);
 
 ### clearBuffer(*[clearChar]*)
 
-Call *clearBuffer()* to zero the display buffer. If the optional *clearChar* parameter is not passed, no characters will be displayed. Pass a character code *(see above)* to zero the display to a specific character, eg. `0` to zero the display.
+Call *clearBuffer()* to zero the class’ internal display buffer. If the optional *clearChar* parameter is not passed, no characters will be displayed. Pass a character code *(see [above](#characters))* to zero the display to a specific character.
 
-*clearBuffer()* does not update the display, only its buffer. Call *updateDisplay()* to refresh the LED.
+*clearBuffer()* does not update the display, only the buffer. Call *updateDisplay()* to refresh the LED.
 
 ```squirrel
 // Set the display to -- --
 led.clearBuffer(17)
-    .updateDisplay();
+   .updateDisplay();
 ```
 
 ### setColon(*set*)
@@ -65,15 +73,15 @@ Call *setColon()* to specify whether the display’s center colon symbol is illu
 ```squirrel
 // Set the display to --:--
 led.clearBuffer(17)
-    .setColon(true)
-    .updateDisplay();
+   .setColon(true)
+   .updateDisplay();
 ```
 
-### writeChar(*rowNum, charVal[, hasDot]*)
+### writeGlyph(*digit, pattern[, hasDot]*)
 
-To write a character that is not in the character set *(see above)* to a single segment, call *writeChar()* and pass the segment number (0, 1, 3 or 4) and a character matrix value as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of the specified segment should be illuminated. By default, the decimal point is not lit.
+To write a character that is not in the character set *(see [above](#characters))* to a single digit, call *writeGlyph()* and pass the digit number (0, 1, 3 or 4) and a glyph-definition pattern as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of the specified digit should be illuminated. By default, the decimal point is not lit.
 
-Calculate character matrix values using the following chart. The segment number is the bit that must be set to illuminate it (or unset to keep it unlit):
+Calculate the glyph pattern value using the following chart. The segment number is the bit that must be set to illuminate it (or unset to keep it unlit):
 
 ```
         0
@@ -86,28 +94,30 @@ Calculate character matrix values using the following chart. The segment number 
         3
 ```
 
+For example, to define the letter 'P', we need to set segments 0, 1, 4, 5 and 6. In bit form that makes 0x73, and this is the value passed into *pattern*.
+
 ```squirrel
 // Display 'SYNC' on the LED
 local letters = [0x6D, 0x6E, 0x37, 0x39];
 
 foreach (index, character in letters) {
-    if (index != 2) led.writeChar(index, character);
+    if (index != 2) led.writeGlyph(index, character);
 }
 
 led.updateDisplay();
 ```
 
-## writeNumber(*rowNum, intVal[, hasDot]*)
+## writeNumber(*digit, number[, hasDot]*)
 
-To write a number to a single segment, call *writeNumber()* and pass the segment number (0, 1, 3 or 4) and the digit value (0 to 9, A to F) as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of the specified segment should be illuminated. By default, the decimal point is not lit.
+To write a number to a single digit, call *writeNumber()* and pass the digit number (0, 1, 3 or 4) and the number to be displayed (0 to 9, A to F) as its parameters. You can also provide a third, optional parameter: a boolean value indicating whether the decimal point to the right of the specified segment should be illuminated. By default, the decimal point is not lit.
 
 ```squirrel
 // Display '42.42' on the LED
 led.writeNumber(0, 4)
-    .writeNumber(1, 2, true)
-    .writeNumber(3, 4)
-    .writeNumber(4, 2)
-    .updateDisplay();
+   .writeNumber(1, 2, true)
+   .writeNumber(3, 4)
+   .writeNumber(4, 2)
+   .updateDisplay();
 ```
 
 ### clearDisplay()
@@ -116,7 +126,7 @@ Call *clearDisplay()* to completely wipe the display, including the colon. Unlik
 
 ### updateDisplay()
 
-Call *updateDisplay()* after changing any or all of the display buffer contents in order to reflect those changes on the display itself.
+Call *updateDisplay()* after changing any or all of the internal display buffer contents in order to reflect those changes on the display itself.
 
 ### setBrightness(*[brightness]*)
 

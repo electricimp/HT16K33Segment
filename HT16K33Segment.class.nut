@@ -19,7 +19,7 @@ class HT16K33Segment {
     static HT16K33_MINUS_CHAR           = 17;
     static HT16K33_CHAR_COUNT           = 17;
 
-    static version = [1,2,0];
+    static version = [1,3,0];
 
     // Class properties; those defined in the Constructor must be null
     _buffer = null;
@@ -101,7 +101,11 @@ class HT16K33Segment {
         return this;
     }
 
-    function writeChar(rowNum, charVal, hasDot = false) {
+    function writeGlyph(digit, pattern, hasDot = false) {
+        return writeChar(digit, pattern, hasDot);
+    }
+
+    function writeChar(digit, charVal, hasDot = false) {
         // Puts the input character matrix (an 8-bit integer) into the specified row,
         // adding a decimal point if required. Character matrix value is calculated by
         // setting the bit(s) representing the segment(s) you want illuminated.
@@ -130,17 +134,17 @@ class HT16K33Segment {
             return this;
         }
 
-        if (rowNum < 0 || rowNum > 4) {
+        if (digit < 0 || digit > 4) {
             server.error("HT16K33Segment.writeChar() chosen row out of range (0-4)");
             return this;
         }
 
-        _buffer[rowNum] = hasDot ? (charVal | 0x80) : charVal;
-        if (_debug) server.log(format("Row %d set to character defined by 0x%02x %s", rowNum, charVal, (hasDot ? "with period" : "without period")));
+        _buffer[digit] = hasDot ? (charVal | 0x80) : charVal;
+        if (_debug) server.log(format("Row %d set to character defined by 0x%02x %s", digit, charVal, (hasDot ? "with period" : "without period")));
         return this;
     }
 
-    function writeNumber(rowNum, intVal, hasDot = false) {
+    function writeNumber(digit, number, hasDot = false) {
         // Puts the number - ie. index of _digits[] - into the specified row,
         // adding a decimal point if required
         // Parameters:
@@ -150,18 +154,18 @@ class HT16K33Segment {
         // Returns:
         //    the instance (this)
 
-        if (rowNum < 0 || rowNum > 4) {
+        if (digit < 0 || digit > 4) {
             server.error("HT16K33Segment.writeNumber() chosen row out of range (0-4)");
             return this;
         }
 
-        if (intVal < 0 || intVal > 17) {
-            server.error("HT16K33Segment.writeNumber() numeric character out of range (0x00-0x0F): " + intVal);
+        if (number < 0 || number > 17) {
+            server.error("HT16K33Segment.writeNumber() numeric character out of range (0x00-0x0F): " + number);
             return this;
         }
 
-        _buffer[rowNum] = hasDot ? (_digits[intVal] | 0x80) : _digits[intVal];
-        if (_debug) server.log(format("Row %d set to integer %d %s", rowNum, intVal, (hasDot ? "with period" : "without period")));
+        _buffer[digit] = hasDot ? (_digits[number] | 0x80) : _digits[number];
+        if (_debug) server.log(format("Row %d set to integer %d %s", digit, number, (hasDot ? "with period" : "without period")));
         return this;
     }
 
