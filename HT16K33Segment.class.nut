@@ -63,7 +63,7 @@ class HT16K33Segment {
         init();
     }
 
-    function init(clearChar = 16, brightness = 15, showColon = false) {
+    function init(character = 16, brightness = 15, showColon = false) {
         // Parameters:
         //   1. Integer index for the _digits[] character matrix to zero the display to
         //   2. Integer value for the display brightness, between 0 and 15
@@ -71,17 +71,11 @@ class HT16K33Segment {
         // Returns:
         //    Nothing
 
-        // Power up the display
+        // Initialise the display
         powerUp();
-
-        // Set the brightness, which power cyles the dispay
-        // Note: setBrightness() verifies the brightness value
         setBrightness(brightness);
-
-        // Clear the screen to the chosen character
-        // Note: clearBuffer() verifies the clearChar value
-        clearBuffer();
-
+        clearBuffer(character);
+        setColon(showColon);
         return this;
     }
 
@@ -228,7 +222,7 @@ class HT16K33Segment {
         _led.write(_ledAddress, brightness.tochar() + "\x00")
     }
 
-    function setDisplayFlash(flashInHertz = 0) {
+    function setDisplayFlash(flashRate = 0) {
         // Parameters:
         //    1. Flash rate in Herz. Must be 0.5, 1 or 2 for a flash, or 0 for no flash
         // Returns:
@@ -237,14 +231,14 @@ class HT16K33Segment {
         local values = [0, 2, 1, 0.5];
         local match = -1;
         foreach (i, value in values) {
-            if (value == flashInHertz) {
+            if (value == flashRate) {
                 match = i;
                 break;
             }
         }
 
         if (match == -1) {
-            server.error("HT16K33Segment.setDisplayBlink() passed an invalid blink frequency");
+            server.error("HT16K33Segment.setDisplayFlash() passed an invalid blink frequency");
             return null;
         }
 

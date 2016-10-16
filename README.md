@@ -2,6 +2,8 @@
 
 Hardware driver for [Adafruit 0.56-inch 4-digit, 7-segment LED display](http://www.adafruit.com/products/878) based on the Holtek HT16K33 controller. The LED communicates over any imp I&sup2;C bus.
 
+**To add this library to your project, add** `#require "HT16K33Segment.class.nut:1.3.0"` **to the top of your device code**
+
 ## Characters
 
 The class incorporates its own (limited) character set, accessed through the following codes:
@@ -11,15 +13,13 @@ The class incorporates its own (limited) character set, accessed through the fol
 - Space character: code 16
 - Minus character: code 17
 
-**To add this library to your project, add** `#require "HT16K33Segment.class.nut:1.3.0"` **to the top of your device code**
-
 ## Release Notes
 
 ### 1.3.0
 
 - Add *writeGlyph()* method to replace *writeChar()* to avoid confusion over method’s role
     - *writeChar()* still included so old code will not break
-- *init()* returns *this*
+- *init()* returns *this*; *init()* code errors fixed
 - Clarifications made to Read Me
 
 ### 1.2.0
@@ -133,13 +133,13 @@ Call *updateDisplay()* after changing any or all of the internal display buffer 
 
 To set the LED’s brightess (its duty cycle), call *setBrightness()* and pass an integer value between 0 (dim) and 15 (maximum brightness). If you don’t pass a value, the method will default to maximum brightness.
 
-### setDisplayFlash(*flashInHertz*)
+### setDisplayFlash(*flashRate*)
 
-This method can be used to flash the display. The value passed into *flashInHertz* is the flash rate in Hertz. This value must be one of the following values, fixed by the HT16K33 controller: 0.5Hz, 1Hz or 2Hz. You can also pass in 0 to disable flashing, and this is the default value.
+This method can be used to flash the display. The value passed into *flashRate* is the flash rate in Hertz. This value must be one of the following values, fixed by the HT16K33 controller: 0.5Hz, 1Hz or 2Hz. You can also pass in 0 to disable flashing, and this is the default value.
 
 ```squirrel
 // Blink the display every second
-led.setDisplayFlag(1);
+led.setDisplayFlash(1);
 ```
 
 ### powerDown()
