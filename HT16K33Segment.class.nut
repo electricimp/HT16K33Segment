@@ -98,11 +98,11 @@ class HT16K33Segment {
         return this;
     }
 
-    function writeGlyph(digit, pattern, hasDot = false) {
-        return writeChar(digit, pattern, hasDot);
+    function writeChar(digit, pattern, hasDot = false) {
+        return writeGlyph(digit, pattern, hasDot);
     }
 
-    function writeChar(digit, charVal, hasDot = false) {
+    function writeGlyph(digit, charVal, hasDot = false) {
         // Puts the input character matrix (an 8-bit integer) into the specified row,
         // adding a decimal point if required. Character matrix value is calculated by
         // setting the bit(s) representing the segment(s) you want illuminated.
