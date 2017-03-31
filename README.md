@@ -51,9 +51,14 @@ The passed imp I&sup2;C bus must be configured before the HT16K33Segment object 
 
 hardware.i2c89.configure(CLOCK_SPEED_400_KHZ);
 led <- HT16K33Segment(hardware.i2c89);
+led.init();
 ```
 
 ## Class Methods
+
+### init(*[character][, brightness][, showColon]*)
+
+Call *init()* to bring up the display. All parameters are optional. The first is a character to display across all the digits; the default is no character. The *brightness* parameters is a value between 0 (low) and 15 (high); the default value is 15. Finally, *showColon* is a boolean: pass `true` to display the colon between digits 1 and 3, or `false` (the default);
 
 ### clearBuffer(*[clearChar]*)
 
@@ -131,7 +136,7 @@ Call *updateDisplay()* after changing any or all of the internal display buffer 
 
 ### setBrightness(*[brightness]*)
 
-To set the LED’s brightess (its duty cycle), call *setBrightness()* and pass an integer value between 0 (dim) and 15 (maximum brightness). If you don’t pass a value, the method will default to maximum brightness.
+To set the LED’s brightness (its duty cycle), call *setBrightness()* and pass an integer value between 0 (dim) and 15 (maximum brightness). If you don’t pass a value, the method will default to maximum brightness.
 
 ### setDisplayFlash(*flashRate*)
 
